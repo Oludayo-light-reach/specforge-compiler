@@ -17,6 +17,7 @@ from spec_compiler.constants import (
     DEFAULT_SPEC_INCLUDE,
     HUMAN_DOC_FILENAMES,
     is_bundle_md,
+    is_spec_file,
 )
 
 
@@ -75,6 +76,24 @@ def test_non_md_returns_false():
     assert not is_bundle_md("src/app.py")
     assert not is_bundle_md("prompts/foo.prompts")
     assert not is_bundle_md("spec.yaml")
+
+
+def test_is_spec_file_only_accepts_root_manifest():
+    # `spec.yaml` is bundle content only at the root — there is exactly
+    # one manifest per bundle. Mirrors `spec-cli/tests/test_constants.py`
+    # and the server's `classify_bundle_path`. Drift between the three
+    # caused the user-visible "✗ backend/app/spec.yaml — Only .md /
+    # .markdown / .prompts files (and spec.yaml) are allowed in a
+    # bundle" rejection at push time.
+    assert is_spec_file("spec.yaml")
+    assert not is_spec_file("backend/app/spec.yaml")
+    assert not is_spec_file("services/api/spec.yaml")
+    # `.yaml` more generally is not a spec extension, so non-manifest
+    # YAML never enters the bundle either.
+    assert not is_spec_file("config.yaml")
+    # Markdown / prompts at any depth still works as before.
+    assert is_spec_file("docs/product.md")
+    assert is_spec_file("anywhere/else.prompts")
 
 
 @pytest.mark.parametrize(

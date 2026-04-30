@@ -5,7 +5,7 @@
 Spec splits three surfaces on purpose:
 
 1. **Spec Cloud** — stores bundles, diffs them, keeps the audit trail.
-2. **Spec CLI** ([spec-cli](https://github.com/spec/spec-cli)) — syncs bundles with Cloud.
+2. **Spec CLI** ([specforge-cli](https://github.com/Unit237/specforge-cli)) — syncs bundles with Cloud.
 3. **Spec Compiler (this repo)** — runs **locally on your laptop**, reads a bundle, calls whatever model you configure, writes generated code to disk.
 
 **The compiler is the only surface that talks to an LLM.** Cloud never calls

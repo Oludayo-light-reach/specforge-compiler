@@ -86,8 +86,17 @@ DEFAULT_SPEC_INCLUDE: tuple[str, ...] = ("docs/**/*.md",)
 
 
 def is_spec_file(path: str | PurePosixPath) -> bool:
+    """True if `path` is a file the compiler will pick up as bundle content.
+
+    `spec.yaml` is recognised **only at the bundle root** — there is
+    exactly one manifest per bundle, so a nested `backend/app/spec.yaml`
+    is application config that happens to share a filename, not a
+    sub-manifest. Mirrors `spec_cli.constants.is_spec_file` and the
+    server's `classify_bundle_path` (the three repos must agree on the
+    extension/manifest gate; the server is still the source of truth).
+    """
     p = PurePosixPath(str(path))
-    if p.name == MANIFEST_FILENAME:
+    if str(p) == MANIFEST_FILENAME:
         return True
     return p.suffix.lower() in SPEC_EXTENSIONS
 
